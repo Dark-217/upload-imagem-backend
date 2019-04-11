@@ -12,10 +12,10 @@ const io = require('socket.io')(server);
 io.on('connection', socket => {
     socket.on('connectRoom', box => {
         socket.join(box);
-    });    
+    });
 });
 
-                 mongoose.connect('mongodb+srv://djamilson:1alvescosta@cluster0-exrjh.mongodb.net/uploadfotos?retryWrites=true',
+mongoose.connect('mongodb+srv://djamilson:1alvescosta@cluster0-exrjh.mongodb.net/uploadfotos?retryWrites=true',
     {
         useNewUrlParser: true
     });
@@ -26,7 +26,7 @@ app.use((req, res, next) => {
     return next();
 });
 
-app.use(cors);
+app.use(cors());
 app.use(express.json()); //para enviar json
 app.use(express.urlencoded({ extended: true })); //para envia arquivos de fotos
 app.use('/files', express.static(path.resolve(__dirname, '..', 'tmp')));
