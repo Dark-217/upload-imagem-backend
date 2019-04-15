@@ -5,11 +5,13 @@ const path = require('path');
 
 const app = express();
 
-const whitelist = ['http://localhost:3000','https://upload-arquivos-frontend.herokuapp.com'];
+const corsOptions = {
+  origin: 'https://upload-arquivos-frontend.herokuapp.com',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
 
-
-app.use(cors());
-app.options( whitelist, cors());
+app.use(cors(corsOptions));
+//app.options( whitelist, cors());
 
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
