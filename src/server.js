@@ -5,10 +5,6 @@ const path = require('path');
 
 const app = express();
 
-const corsOptions = {
-  origin: [process.env.URL, 'upload-arquivos-frontend.herokuapp.com']
-};
-
 //CORS middleware
 const allowCrossDomain = function(req, res, next) {
   res.header('Access-Control-Allow-Origin', 'upload-arquivos-frontend.herokuapp.com');
