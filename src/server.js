@@ -6,12 +6,11 @@ const path = require('path');
 const app = express();
 
 const corsOptions = {
-  origin: 'https://upload-arquivos-frontend.herokuapp.com',
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-}
+  origin: [process.env.URL, 'https://upload-arquivos-frontend.herokuapp.com']
+};
 
-app.use(cors());
-//app.options( whitelist, cors());
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
@@ -26,20 +25,9 @@ mongoose.connect('mongodb+srv://djamilson:Kwpx5RX_tw!uvG-@cluster0-exrjh.mongodb
   useNewUrlParser: true
 });
 
-const ALLOWED_ORIGINS = [
-  'https://upload-arquivos-frontend.herokuapp.com',
-  'http://localhost:3000'
-]
 
 app.use((req, res, next) => {
   
-  if(ALLOWED_ORIGINS.indexOf(req.headers.origin) > -1) {
-    res.set('Access-Control-Allow-Credentials', 'true')
-    res.set('Access-Control-Allow-Origin', req.headers.origin)
-  } else { // allow other origins to make unauthenticated CORS requests
-    res.set('Access-Control-Allow-Origin', '*')        
-  }
-
    // res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
     //res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     //res.header('Access-Control-Allow-Headers', 'Content-Type');
