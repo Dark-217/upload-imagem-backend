@@ -5,7 +5,7 @@ const path = require('path');
 
 const app = express();
 
-const whitelist = ['https://upload-arquivos-frontend.herokuapp.com/']
+const whitelist = ['https://upload-arquivos-frontend.herokuapp.com']
 const corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {
