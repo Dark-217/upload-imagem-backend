@@ -5,7 +5,11 @@ const path = require('path');
 
 
 // Set up a whitelist and check against it:
-const whitelist = ['https://upload-arquivos-frontend.herokuapp.com', 'http://upload-arquivos-frontend.herokuapp.com']
+const whitelist = [
+'https://upload-arquivos-frontend.herokuapp.com', 
+'https://upload-arquivos-banckend.herokuapp.com/boxes',
+'http://upload-arquivos-frontend.herokuapp.com//boxes/:id',
+'http://upload-arquivos-frontend.herokuapp.com//boxes/:id/files']
 const corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {
