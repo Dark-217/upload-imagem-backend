@@ -3,8 +3,24 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 
+
+// Set up a whitelist and check against it:
+const whitelist = ['https://upload-arquivos-frontend.herokuapp.com', 'http://upload-arquivos-frontend.herokuapp.com']
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
+}
+
+
 const app = express();
-app.use(cors());
+//app.use(cors());
+// Then pass them to cors:
+app.use(cors(corsOptions));
 
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
