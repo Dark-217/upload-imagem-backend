@@ -27,7 +27,7 @@ io.on('connection', socket => {
     });
 });
 
-mongoose.connect('mongodb+srv://djamilson:1alvescosta@cluster0-exrjh.mongodb.net/uploadfotos?retryWrites=true',
+mongoose.connect('mongodb+srv://djamilson:Kwpx5RX_tw!uvG-@cluster0-exrjh.mongodb.net/uploadfotos?retryWrites=true',
     {
         useNewUrlParser: true
     });
