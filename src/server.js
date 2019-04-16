@@ -26,7 +26,7 @@ mongoose.connect(`mongodb+srv://${db_login}:${db_key}-@cluster0-exrjh.mongodb.ne
 app.use((req, res, next) => {
   
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+ // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   
    req.io = io;
 
@@ -40,4 +40,4 @@ app.use('/files', express.static(path.resolve(__dirname, '..', 'tmp')));
 
 app.use(require('./routes'));
 
-server.listen({port} || 3333);
+server.listen(port || 3333);
