@@ -5,18 +5,7 @@ const path = require('path');
 
 const app = express();
 
-//CORS middleware
-const allowCrossDomain = function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', 'upload-arquivos-frontend.herokuapp.com');
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
-
-  next();
-}
-
 app.use(cors());
-app.use(allowCrossDomain);
-//app.options('*', cors(corsOptions));
 
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
@@ -34,10 +23,10 @@ mongoose.connect('mongodb+srv://djamilson:Kwpx5RX_tw!uvG-@cluster0-exrjh.mongodb
 
 app.use((req, res, next) => {
   
-   // res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
-    //res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    //res.header('Access-Control-Allow-Headers', 'Content-Type');
-  req.io = io;
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  
+   req.io = io;
 
   return next();
 });
