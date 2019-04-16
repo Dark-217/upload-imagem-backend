@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+const dotenv = require('dotenv');
 
 const app = express();
 
@@ -16,7 +17,9 @@ io.on('connection', socket => {
   });
 });
 
-mongoose.connect('mongodb+srv://djamilson:Kwpx5RX_tw!uvG-@cluster0-exrjh.mongodb.net/uploadfotos?retryWrites=true', {
+dotenv.config();
+
+mongoose.connect(`mongodb+srv://${process.env.DB_LOGIN}:${process.env.DB_KEY}-@cluster0-exrjh.mongodb.net/uploadfotos?retryWrites=true`, {
   useNewUrlParser: true
 });
 
