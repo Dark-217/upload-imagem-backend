@@ -2,7 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
-const dotenv = require('dotenv');
+
+const { port, db_key, db_login } = require('./config/config');
 
 const app = express();
 
@@ -17,9 +18,7 @@ io.on('connection', socket => {
   });
 });
 
-dotenv.config();
-
-mongoose.connect(`mongodb+srv://${process.env.DB_LOGIN}:${process.env.DB_KEY}-@cluster0-exrjh.mongodb.net/uploadfotos?retryWrites=true`, {
+mongoose.connect(`mongodb+srv://${db_login}:${db_key}-@cluster0-exrjh.mongodb.net/uploadfotos?retryWrites=true`, {
   useNewUrlParser: true
 });
 
@@ -41,4 +40,4 @@ app.use('/files', express.static(path.resolve(__dirname, '..', 'tmp')));
 
 app.use(require('./routes'));
 
-server.listen(process.env.PORT || 3333);
+server.listen({port} || 3333);
