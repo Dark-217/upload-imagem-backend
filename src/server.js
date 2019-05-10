@@ -1,43 +1,46 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const path = require('path');
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const path = require("path");
+const morgan = require("morgan");
 
-const { port, db_key, db_login } = require('./config/config');
+const { port, db_key, db_login } = require("./config/config");
 
 const app = express();
 
 app.use(cors());
 
-const server = require('http').Server(app);
-const io = require('socket.io')(server);
+const server = require("http").Server(app);
+const io = require("socket.io")(server);
 
-io.on('connection', socket => {
-  socket.on('connectRoom', box => {
+io.on("connection", socket => {
+  socket.on("connectRoom", box => {
     socket.join(box);
   });
 });
 
-mongoose.connect(`mongodb+srv://${db_login}:${db_key}-@cluster0-exrjh.mongodb.net/uploadfotos?retryWrites=true`, {
+mongoose.connect(process.env.MONGO_URL, {
   useNewUrlParser: true
 });
 
-
 app.use((req, res, next) => {
-  
   res.header("Access-Control-Allow-Origin", "*");
- // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  
-   req.io = io;
+  // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+  req.io = io;
 
   return next();
 });
 
-
 app.use(express.json()); //para enviar json
 app.use(express.urlencoded({ extended: true })); //para envia arquivos de fotos
-app.use('/files', express.static(path.resolve(__dirname, '..', 'tmp')));
+app.use(morgan("dev"));
 
-app.use(require('./routes'));
+app.use(
+  "/files",
+  express.static(path.resolve(__dirname, "..", "tmp", "uploads"))
+);
+
+app.use(require("./routes"));
 
 server.listen(port || 3333);
