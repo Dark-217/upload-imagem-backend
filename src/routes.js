@@ -10,12 +10,14 @@ const FileController = require("./controllers/FileController");
 routes.post("/boxes", BoxController.store);
 routes.get("/boxes/:id", BoxController.show);
 
+
 routes.post(
   "/boxes/:id/files",
   multer(multerConfig).single("file"),
   FileController.store
 );
 
-routes.delete("/boxes/:id", BoxController.delete);
+
+routes.delete("/boxes/:box_id/:id", FileController.destroy);
 
 module.exports = routes;

@@ -9,11 +9,8 @@ const s3 = new aws.S3();
 const File = new mongoose.Schema(
   {
     title: { type: String, required: true },
-    path: {
-      type: String,
-      required: true
-    },
     size: Number,
+    key: String,
     url: String
   },
   {
@@ -23,21 +20,14 @@ const File = new mongoose.Schema(
   }
 );
 
-/*
-File.virtual("url").get(function() {
-  const url = process.env.URL || "http://localhost:3333";
-  return `${url}/files/${encodeURIComponent(this.path)}`;
-});*/ 
-
 File.pre("save", function() {
   if (!this.url) {
-    this.url = `${process.env.APP_URL}/files/${encodeURIComponent(this.path)}`;
-  }
-  console.log("Model::::: ", this.url)
+    this.url = `${process.env.APP_URL}/files/${this.key}`;
+  }  
 });
 
 File.pre("remove", function() {
-
+  
   if (process.env.STORAGE_TYPE === "s3") {
     return s3
       .deleteObject({
