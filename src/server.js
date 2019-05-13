@@ -1,4 +1,4 @@
-require('dotenv').config()
+require("dotenv").config();
 
 const express = require("express");
 const mongoose = require("mongoose");
@@ -27,15 +27,13 @@ mongoose.connect(process.env.MONGO_URL, {
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
-  // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-
   req.io = io;
 
   return next();
 });
 
 app.use(express.json()); //para enviar json
-app.use(express.urlencoded({ extended: true })); //para envia arquivos de fotos
+app.use(express.urlencoded({ extended: true })); //para envia arquivos e fotos
 app.use(morgan("dev"));
 
 app.use(
