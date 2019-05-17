@@ -6,43 +6,93 @@ const cors = require("cors");
 const path = require("path");
 const morgan = require("morgan");
 
-const { port, db_key, db_login } = require("./config/config");
+const Youch = require("youch");
+const Sentry = require("@sentry/node");
+const validate = require("express-validation");
+const databaseConfig = require("./config/database");
+const sentryConfig = require("./config/sentry");
 
-const app = express();
+class App {
+  constructor() {
+    this.express = express();
 
-app.use(cors());
+    this.middlewares_cors();
 
-const server = require("http").Server(app);
-const io = require("socket.io")(server);
+    const server = require("http").Server(this.express);
+    this.io = require("socket.io")(server);
 
-io.on("connection", socket => {
-  console.log(`Socket ${socket.id} connected.`);
-  socket.on("connectRoom", box => {
-    socket.join(box);
-  });
- 
-});
+    this.isDev = process.env.NODE_ENV !== "production";
 
-mongoose.connect(process.env.MONGO_URL, {
-  useNewUrlParser: true
-});
+    this.connectSocket();
+    this.sentry();
+    this.database();
+    this.middlewares();
+    this.routes();
+    this.exception();
+  }
 
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  req.io = io;
+  connectSocket() {
+    this.io.on("connection", socket => {
+      socket.on("connectRoom", box => {
+        socket.join(box);
+      });
+    });
+  }
+  sentry() {
+    Sentry.init(sentryConfig);
+  }
 
-  return next();
-});
+  database() {
+    mongoose.connect(databaseConfig.uri, {
+      useCreateIndex: true,
+      useNewUrlParser: true
+    });
+  }
+  middlewares_cors() {
+    this.express.use(cors());
+  }
+  middlewares() {
+    this.express.use((req, res, next) => {
+      res.header("Access-Control-Allow-Origin", "*");
+      req.io = this.io;
 
-app.use(express.json()); //para enviar json
-app.use(express.urlencoded({ extended: true })); //para envia arquivos e fotos
-app.use(morgan("dev"));
+      return next();
+    });
+    this.express.use(express.json());
+    this.express.use(express.urlencoded({ extended: true })); //para envia arquivos e fotos
+    this.express.use(morgan("dev"));
+    this.express.use(Sentry.Handlers.requestHandler());
+    this.express.use(
+      "/files",
+      express.static(path.resolve(__dirname, "..", "tmp", "uploads"))
+    );
+  }
 
-app.use(
-  "/files",
-  express.static(path.resolve(__dirname, "..", "tmp", "uploads"))
-);
+  routes() {
+    this.express.use(require("./routes"));
+  }
 
-app.use(require("./routes"));
+  exception() {
+    if (process.env.NODE_ENV === "production") {
+      this.express.use(Sentry.Handlers.errorHandler());
+    }
 
-server.listen(port || 3333);
+    this.express.use(async (err, req, res, next) => {
+      if (err instanceof validate.ValidationError) {
+        return res.status(err.status).json(err);
+      }
+
+      if (process.env.NODE_ENV !== "production") {
+        const youch = new Youch(err, req);
+
+        return res.json(await youch.toJSON());
+      }
+
+      return res
+        .status(err.status || 500)
+        .json({ error: "Internal Server Error" });
+    });
+  }
+}
+
+module.exports = new App().express;
