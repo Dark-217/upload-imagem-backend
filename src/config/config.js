@@ -6,6 +6,7 @@ module.exports = {
   db_key: process.env.DB_KEY,
   db_login: process.env.DB_LOGIN,
   port: process.env.PORT,
+  mongo_url: process.env.MONGO_URL,
 
   storage_type: process.env.STORAGE_TYPE,
 
