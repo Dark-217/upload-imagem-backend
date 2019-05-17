@@ -6,9 +6,6 @@ class FileController {
     const box = await Box.findById(req.params.id);
     const { originalname: name, size, key, location: url = "" } = req.file;
 
-    console.log("=================================");
-    console.log(req.file)
-    console.log("=================================");
     const file = await File.create({
       title: name,     
       size,
@@ -26,18 +23,24 @@ class FileController {
   }
 
   async destroy(req, res){
+    const { url, params } = req;
 
+    console.log('Paramentro ID File: ', params.id)
+  console.log('====>>>>>>>>>>>>: ', url)
+  const box_id = url.indexOf("/boxes/");  
+  const box_id_ = url.lastIndexOf("/");
+  const id_box = url.substring(box_id + 7, box_id_);
+
+  console.log('SubString Final: ', id_box); 
+
+    const file = await File.findById(params.id);
     
-    console.log("D E L E T E", req.params.id);
-
-    
-    const file = await File.findById(req.params.id);
-    
-    console.log("D E L E T E", file);
-
-
     await file.remove();
   
+  
+    req.io.sockets.in(id_box).emit("id", params.id);
+     
+    
     return res.send();
   }
 }

@@ -1,6 +1,7 @@
 const express = require("express");
 const multer = require("multer");
 const multerConfig = require("./config/multer");
+const handle = require('express-async-handler')
 
 const routes = express.Router();
 
@@ -18,6 +19,5 @@ routes.post(
 );
 
 
-routes.delete("/boxes/:box_id/:id", FileController.destroy);
-
+routes.delete("/boxes/:box_id/:id", handle(FileController.destroy));
 module.exports = routes;

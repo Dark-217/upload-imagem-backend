@@ -18,7 +18,7 @@ class BoxController {
 
   async delete (req, res) {
    
-        const post = await Post.findById(req.params.id);
+        const post = await Box.findById(req.params.id);
       
         await post.remove();
       
